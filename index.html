@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Annuaire Prestataires - Almaviva Santé</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
+.app{max-width:1100px;margin:0 auto;padding:1.5rem 1rem}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px}
+.header-left h1{font-size:20px;font-weight:500;color:#1a1a1a;display:flex;align-items:center;gap:8px}
+.header-left p{font-size:13px;color:#666;margin-top:3px}
+.btn-export{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:13px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;cursor:pointer;transition:background .15s}
+.btn-export:hover{background:#f5f5f0}
+.tabs{display:flex;gap:4px;border-bottom:1px solid #e5e5e5;margin-bottom:1.25rem}
+.tab{padding:8px 16px;font-size:14px;border:none;background:none;cursor:pointer;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .15s;display:inline-flex;align-items:center;gap:5px}
+.tab.active{color:#1a1a1a;font-weight:500;border-bottom-color:#1a1a1a}
+.tab:hover:not(.active){color:#1a1a1a}
+.panel{display:none}.panel.active{display:block}
+.toolbar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.toolbar input,.toolbar select{padding:7px 12px;font-size:13px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;outline:none}
+.toolbar input{flex:1;min-width:180px}
+.toolbar input:focus,.toolbar select:focus{border-color:#888}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.stat{background:#efefeb;border-radius:8px;padding:10px 12px;text-align:center}
+.stat-num{font-size:20px;font-weight:500;color:#1a1a1a}
+.stat-lbl{font-size:11px;color:#888;margin-top:2px}
+.tbl-wrap{overflow-x:auto;background:#fff;border:1px solid #e5e5e5;border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{text-align:left;padding:9px 10px;font-weight:500;font-size:11px;color:#888;border-bottom:1px solid #e5e5e5;white-space:nowrap;cursor:pointer;user-select:none;background:#fafaf8}
+thead th:hover{color:#1a1a1a}
+thead th.sorted{color:#1a1a1a}
+tbody tr{border-bottom:1px solid #f0f0f0;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#fafaf8}
+tbody td{padding:9px 10px;color:#1a1a1a;vertical-align:top}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+.op-sfr{background:#e8f0fe;color:#0C447C}
+.op-orange{background:#faeeda;color:#633806}
+.op-bouygues{background:#e1f5ee;color:#085041}
+.op-avelia{background:#fbeaf0;color:#72243E}
+.op-xefi{background:#eeedfe;color:#3C3489}
+.op-adista{background:#fcebeb;color:#791F1F}
+.op-keyyo{background:#eaf3de;color:#27500A}
+.op-free{background:#f1efe8;color:#444441}
+.op-default{background:#f1efe8;color:#666}
+.st-actif{background:#e1f5ee;color:#085041}
+.st-inactif{background:#f1efe8;color:#444441}
+.st-recontacter{background:#faeeda;color:#633806}
+.copy-btn{background:none;border:none;cursor:pointer;color:#bbb;padding:0 3px;font-size:12px;vertical-align:middle;transition:color .15s}
+.copy-btn:hover{color:#1a1a1a}
+.action-btn{background:none;border:1px solid #ddd;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;color:#888;display:inline-flex;align-items:center;gap:3px;transition:all .15s}
+.action-btn:hover{background:#f5f5f0;color:#1a1a1a}
+.action-btn.danger:hover{background:#fef2f2;color:#991f1f;border-color:#f0c0c0}
+.cnt-badge{background:#dbeafe;color:#1e40af;border-radius:10px;padding:0 5px;font-size:10px;font-weight:500}
+.comments-panel{background:#f8f8f6;border-radius:8px;padding:10px;margin-top:6px;border:1px solid #e5e5e5}
+.comment-item{padding:6px 0;border-bottom:1px solid #eee}
+.comment-item:last-child{border-bottom:none}
+.comment-meta{font-size:11px;color:#999;margin-bottom:2px}
+.comment-text{font-size:12px;color:#1a1a1a}
+.comment-form{display:flex;gap:6px;margin-top:8px}
+.comment-form input{flex:1;font-size:12px;padding:5px 9px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#1a1a1a;outline:none}
+.comment-form input:focus{border-color:#888}
+.comment-form button{padding:5px 10px;font-size:12px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;color:#1a1a1a;transition:background .15s}
+.comment-form button:hover{background:#f5f5f0}
+.edit-row td{background:#fffef5}
+.edit-input{width:100%;padding:4px 6px;font-size:12px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#1a1a1a;outline:none}
+.edit-input:focus{border-color:#888}
+.edit-select{width:100%;padding:4px 6px;font-size:12px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#1a1a1a}
+.form-card{background:#fff;border:1px solid #e5e5e5;border-radius:12px;padding:1.5rem}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:12px;font-weight:500;color:#666}
+.fg input,.fg select,.fg textarea{padding:8px 12px;font-size:14px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#1a1a1a;font-family:inherit;outline:none;transition:border-color .15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#888}
+.fg textarea{resize:vertical;min-height:70px}
+.btn-primary{background:#1a1a1a;color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500;transition:background .15s}
+.btn-primary:hover{background:#333}
+.btn-sec{background:none;border:1px solid #ddd;padding:9px 20px;border-radius:8px;font-size:14px;cursor:pointer;color:#1a1a1a;transition:background .15s}
+.btn-sec:hover{background:#f5f5f0}
+.success-msg{background:#e1f5ee;color:#085041;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:12px;display:none;align-items:center;gap:8px}
+.empty{text-align:center;padding:3rem;color:#999;font-size:14px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;border-radius:8px;padding:8px 16px;font-size:13px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1}
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr}
+  .fg.full{grid-column:1}
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<div class="app">
+  <div class="header">
+    <div class="header-left">
+      <h1><i class="ti ti-address-book"></i>Annuaire prestataires</h1>
+      <p>Référencement des contacts opérateurs &amp; partenaires IT — Almaviva Santé</p>
+    </div>
+    <button class="btn-export" onclick="exportCSV()"><i class="ti ti-download"></i>Exporter CSV</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('list')"><i class="ti ti-list"></i>Annuaire</button>
+    <button class="tab" onclick="showTab('add')"><i class="ti ti-plus"></i>Ajouter un contact</button>
+  </div>
+
+  <div id="tab-list" class="panel active">
+    <div class="stats" id="stats"></div>
+    <div class="toolbar">
+      <input id="search" type="text" placeholder="Rechercher nom, prestataire, email, service..." oninput="renderTable()">
+      <select id="filter-op" onchange="renderTable()"><option value="">Tous les prestataires</option></select>
+      <select id="filter-st" onchange="renderTable()">
+        <option value="">Tous les statuts</option>
+        <option value="Actif">Actif</option>
+        <option value="Inactif">Inactif</option>
+        <option value="À recontacter">À recontacter</option>
+      </select>
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortBy('op')" id="th-op">Prestataire - Client</th>
+            <th onclick="sortBy('name')" id="th-name">Contact</th>
+            <th onclick="sortBy('service')" id="th-service">Type de service</th>
+            <th>Téléphone</th>
+            <th>Email</th>
+            <th onclick="sortBy('role')" id="th-role">Fonction</th>
+            <th onclick="sortBy('status')" id="th-status">Statut</th>
+            <th>Màj</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div id="empty" class="empty" style="display:none"><i class="ti ti-search-off" style="font-size:28px;display:block;margin-bottom:8px"></i>Aucun résultat trouvé</div>
+  </div>
+
+  <div id="tab-add" class="panel">
+    <div id="success-msg" class="success-msg"><i class="ti ti-check"></i>Contact ajouté avec succès !</div>
+    <div class="form-card">
+      <p style="font-size:14px;color:#666;margin-bottom:1.25rem">Remplissez les informations du nouveau contact prestataire.</p>
+      <div class="form-grid">
+        <div class="fg">
+          <label>Prestataire - Client *</label>
+          <input id="f-op" type="text" placeholder="ex: SFR, Orange, Keyyo..." list="op-list">
+          <datalist id="op-list"></datalist>
+        </div>
+        <div class="fg">
+          <label>Type de service</label>
+          <input id="f-service" type="text" placeholder="ex: Téléphonie, Fibre, Infogérance...">
+        </div>
+        <div class="fg">
+          <label>Civilité &amp; Nom *</label>
+          <input id="f-name" type="text" placeholder="ex: Mme Martin Sophie">
+        </div>
+        <div class="fg">
+          <label>Fonction</label>
+          <input id="f-role" type="text" placeholder="ex: Ingénieur Commercial">
+        </div>
+        <div class="fg">
+          <label>Numéro de téléphone</label>
+          <input id="f-tel" type="text" placeholder="06 xx xx xx xx">
+        </div>
+        <div class="fg">
+          <label>Email</label>
+          <input id="f-email" type="email" placeholder="contact@prestataire.fr">
+        </div>
+        <div class="fg">
+          <label>Statut</label>
+          <select id="f-status">
+            <option value="Actif">Actif</option>
+            <option value="À recontacter">À recontacter</option>
+            <option value="Inactif">Inactif</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Ajouté par</label>
+          <input id="f-author" type="text" placeholder="Votre nom">
+        </div>
+        <div class="fg full">
+          <label>Commentaire initial</label>
+          <textarea id="f-comment" placeholder="Notes, contexte, informations utiles..."></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" onclick="addContact()">Ajouter le contact</button>
+        <button class="btn-sec" onclick="resetForm()">Réinitialiser</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const today=()=>new Date().toLocaleDateString('fr-FR');
+const nowStr=()=>{const d=new Date();return d.toLocaleDateString('fr-FR')+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});};
+
+let data=[
+  {id:1,op:'SFR',name:'Mme Garcin Aurélie',tel:'04 88 41 93 59 / 06 21 45 20 18',email:'aurelie.garcin@sfr.com',role:'Ingénieur Commerciale',service:'Téléphonie mobile',status:'Actif',author:'Admin',updated:today(),comments:[]},
+  {id:2,op:'SFR',name:'Mme Solene Pulicani',tel:'',email:'solene.pulicani@sfr.com',role:'Assistante',service:'Téléphonie mobile',status:'Actif',author:'Admin',updated:today(),comments:[]},
+  {id:3,op:'Orange',name:'Mme Maryline Pierron',tel:'06.81.49.37.18',email:'maryline.pierron@orange.com',role:'Attachée Commerciale',service:'Fibre / ADSL',status:'Actif',author:'Admin',updated:today(),comments:[]},
+  {id:4,op:'Orange',name:'M. Parkésian Julien',tel:'',email:'julien.parsekian@orange.com',role:'Responsable de compte',service:'Fibre / ADSL',status:'Actif',author:'Admin',updated:today(),comments:[]},
+  {id:5,op:'Orange',name:'M. Isaac Franck',tel:'',email:'franck.isaac@orange.com',role:'Gestionnaire',service:'Fibre / ADSL',status:'À recontacter',author:'Admin',updated:today(),comments:[]},
+  {id:6,op:'Bouygues télécom Enterprises',name:'M. Lucas Hannoun',tel:'06.65.34.49.38',email:'lhannoun@bouyguestelecom.fr',role:'Ingénieur Commercial',service:'Téléphonie entreprise',status:'Actif',author:'Admin',updated:today(),comments:[]},
+  {id:7,op:'Avelia / Eurofiber',name:'M. Philippe PECHEUX',tel:'06 24 61 87 76',email:'philippe.pecheux@avelia.net',role:'Team Leader',service:'Fibre entreprise',status:'Actif',author:'Admin',updated:today(),comments:[]},
+  {id:8,op:'Xefi',name:'Mme Maud SANCHEZ',tel:'+33 184212102 / 0673035565',email:'m.sanchez@xefi.fr',role:'Dirigeante',service:'Infogérance IT',status:'Actif',author:'Admin',updated:today(),comments:[]},
+  {id:9,op:'Xefi',name:'Mme Laureline DE JESUS',tel:'331 84 21 21 02',email:'l.dejesus@xefi.fr',role:'Assistante commercial',service:'Infogérance IT',status:'Actif',author:'Admin',updated:today(),comments:[]},
+  {id:10,op:'Adista',name:'Mme Cynthia Jallon',tel:'+33 3 57 54 07 28',email:'cjallon@adista.fr',role:'Chargée de projets IT',service:'Réseau / SD-WAN',status:'Actif',author:'Admin',updated:today(),comments:[]},
+  {id:11,op:'Keyyo',name:'Mme Souncary Sagna',tel:'33 180 307 944',email:'ssagna@keyyo.com',role:'Ingénieur Commercial VD Premium',service:'VoIP / UCaaS',status:'Actif',author:'Admin',updated:today(),comments:[]},
+  {id:12,op:'Keyyo',name:'Mme Mylene Villaret',tel:'',email:'mvillaret@keyyo.com',role:'Manager Commercial',service:'VoIP / UCaaS',status:'À recontacter',author:'Admin',updated:today(),comments:[]},
+  {id:13,op:'Free Pro',name:'M. Karim BENABBOU',tel:'04 22 90 99 04 / 06 63 74 90 98',email:'Karim.BENABBOU@freepro.com',role:'Ingénieur ETI/GC',service:'Fibre entreprise',status:'Actif',author:'Admin',updated:today(),comments:[]}
+];
+
+let openComments={},editId=null,sortCol='op',sortDir=1,nextId=14;
+
+const COLORS={'SFR':'op-sfr','Orange':'op-orange','Bouygues':'op-bouygues','Avelia':'op-avelia','Xefi':'op-xefi','Adista':'op-adista','Keyyo':'op-keyyo','Free Pro':'op-free'};
+function bc(op){for(const k in COLORS)if(op.toLowerCase().includes(k.toLowerCase()))return COLORS[k];return 'op-default';}
+function sc(s){return s==='Actif'?'st-actif':s==='Inactif'?'st-inactif':'st-recontacter';}
+
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+function copyText(txt){
+  navigator.clipboard.writeText(txt).then(()=>showToast('Copié dans le presse-papier !'));
+}
+
+function showTab(t){
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',['list','add'][i]===t));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+}
+
+function sortBy(col){
+  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}
+  ['op','name','service','role','status'].forEach(c=>{
+    const el=document.getElementById('th-'+c);
+    if(el)el.classList.remove('sorted');
+  });
+  const el=document.getElementById('th-'+col);
+  if(el){el.classList.add('sorted');el.innerHTML=el.innerHTML.replace(/ [↑↓]$/,'')+' '+(sortDir===1?'↑':'↓');}
+  renderTable();
+}
+
+function renderStats(){
+  const ops=[...new Set(data.map(d=>d.op))];
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><div class="stat-num">${data.length}</div><div class="stat-lbl">Contacts</div></div>
+    <div class="stat"><div class="stat-num">${ops.length}</div><div class="stat-lbl">Prestataires</div></div>
+    <div class="stat"><div class="stat-num">${data.filter(d=>d.status==='Actif').length}</div><div class="stat-lbl">Actifs</div></div>
+    <div class="stat"><div class="stat-num">${data.filter(d=>d.comments.length>0).length}</div><div class="stat-lbl">Avec notes</div></div>`;
+}
+
+function renderFilter(){
+  const sel=document.getElementById('filter-op');
+  const cur=sel.value;
+  const ops=[...new Set(data.map(d=>d.op))].sort();
+  sel.innerHTML='<option value="">Tous les prestataires</option>'+ops.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o}</option>`).join('');
+  document.getElementById('op-list').innerHTML=ops.map(o=>`<option value="${o}">`).join('');
+}
+
+function getFiltered(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const op=document.getElementById('filter-op').value;
+  const st=document.getElementById('filter-st').value;
+  return data.filter(r=>{
+    const m=!q||[r.op,r.name,r.email,r.role,r.tel,r.service,r.status].some(f=>(f||'').toLowerCase().includes(q));
+    return m&&(!op||r.op===op)&&(!st||r.status===st);
+  }).sort((a,b)=>{
+    const av=(a[sortCol]||'').toLowerCase(),bv=(b[sortCol]||'').toLowerCase();
+    return av<bv?-sortDir:av>bv?sortDir:0;
+  });
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderTable(){
+  const filtered=getFiltered();
+  document.getElementById('empty').style.display=filtered.length?'none':'block';
+  document.getElementById('tbody').innerHTML=filtered.map(r=>{
+    if(editId===r.id)return renderEditRow(r);
+    const telSafe=esc(r.tel||'');
+    const emailSafe=esc(r.email||'');
+    return `<tr>
+      <td><span class="badge ${bc(r.op)}">${esc(r.op)}</span>${r.author?`<div style="font-size:10px;color:#999;margin-top:3px">par ${esc(r.author)}</div>`:''}</td>
+      <td style="font-weight:500;font-size:12px">${esc(r.name)}</td>
+      <td style="color:#666;font-size:11px">${esc(r.service)||'—'}</td>
+      <td style="color:#666;font-size:11px">${r.tel?`${telSafe}<button class="copy-btn" onclick="copyText('${telSafe}')" title="Copier"><i class="ti ti-copy"></i></button>`:'—'}</td>
+      <td style="font-size:11px">${r.email?`<a href="mailto:${emailSafe}" style="color:#185FA5;text-decoration:none">${emailSafe}</a><button class="copy-btn" onclick="copyText('${emailSafe}')" title="Copier"><i class="ti ti-copy"></i></button>`:'—'}</td>
+      <td style="color:#666;font-size:11px">${esc(r.role)||'—'}</td>
+      <td><span class="badge ${sc(r.status)}">${esc(r.status)}</span></td>
+      <td style="font-size:10px;color:#999">${r.updated}</td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          <button class="action-btn" onclick="toggleComments(${r.id})" title="Commentaires"><i class="ti ti-message-2" style="font-size:12px"></i>${r.comments.length?`<span class="cnt-badge">${r.comments.length}</span>`:''}</button>
+          <button class="action-btn" onclick="startEdit(${r.id})" title="Modifier"><i class="ti ti-edit" style="font-size:12px"></i></button>
+          <button class="action-btn danger" onclick="deleteContact(${r.id})" title="Supprimer"><i class="ti ti-trash" style="font-size:12px"></i></button>
+        </div>
+        <div id="comments-${r.id}" style="display:${openComments[r.id]?'block':'none'}">
+          <div class="comments-panel">
+            ${r.comments.length?r.comments.map(c=>`<div class="comment-item"><div class="comment-meta">${esc(c.author)} · ${esc(c.date)}</div><div class="comment-text">${esc(c.text)}</div></div>`).join(''):'<p style="font-size:11px;color:#999">Aucun commentaire.</p>'}
+            <div class="comment-form">
+              <input id="ci-${r.id}" type="text" placeholder="Ajouter une note..." onkeydown="if(event.key==='Enter')postComment(${r.id})">
+              <button onclick="postComment(${r.id})"><i class="ti ti-send"></i></button>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderEditRow(r){
+  const ops=[...new Set(data.map(d=>d.op))];
+  return `<tr class="edit-row">
+    <td><input class="edit-input" id="e-op" value="${esc(r.op)}" list="op-list-e"><datalist id="op-list-e">${ops.map(o=>`<option value="${esc(o)}">`).join('')}</datalist></td>
+    <td><input class="edit-input" id="e-name" value="${esc(r.name)}"></td>
+    <td><input class="edit-input" id="e-service" value="${esc(r.service||'')}"></td>
+    <td><input class="edit-input" id="e-tel" value="${esc(r.tel||'')}"></td>
+    <td><input class="edit-input" id="e-email" value="${esc(r.email||'')}"></td>
+    <td><input class="edit-input" id="e-role" value="${esc(r.role||'')}"></td>
+    <td><select class="edit-select" id="e-status">
+      <option${r.status==='Actif'?' selected':''}>Actif</option>
+      <option${r.status==='Inactif'?' selected':''}>Inactif</option>
+      <option${r.status==='À recontacter'?' selected':''}>À recontacter</option>
+    </select></td>
+    <td style="font-size:10px;color:#999">${today()}</td>
+    <td>
+      <div style="display:flex;gap:4px">
+        <button class="action-btn" onclick="saveEdit(${r.id})" style="color:#085041"><i class="ti ti-check" style="font-size:12px"></i></button>
+        <button class="action-btn" onclick="cancelEdit()"><i class="ti ti-x" style="font-size:12px"></i></button>
+      </div>
+    </td>
+  </tr>`;
+}
+
+function startEdit(id){editId=id;renderTable();}
+function cancelEdit(){editId=null;renderTable();}
+function saveEdit(id){
+  const r=data.find(d=>d.id===id);if(!r)return;
+  r.op=document.getElementById('e-op').value.trim()||r.op;
+  r.name=document.getElementById('e-name').value.trim()||r.name;
+  r.service=document.getElementById('e-service').value.trim();
+  r.tel=document.getElementById('e-tel').value.trim();
+  r.email=document.getElementById('e-email').value.trim();
+  r.role=document.getElementById('e-role').value.trim();
+  r.status=document.getElementById('e-status').value;
+  r.updated=today();editId=null;
+  renderStats();renderFilter();renderTable();showToast('Contact mis à jour');
+}
+
+function deleteContact(id){
+  if(!confirm('Supprimer ce contact définitivement ?'))return;
+  data=data.filter(d=>d.id!==id);
+  renderStats();renderFilter();renderTable();showToast('Contact supprimé');
+}
+
+function toggleComments(id){
+  openComments[id]=!openComments[id];renderTable();
+  if(openComments[id])setTimeout(()=>document.getElementById('ci-'+id)?.focus(),50);
+}
+
+function postComment(id){
+  const inp=document.getElementById('ci-'+id);
+  const txt=inp?.value?.trim();if(!txt)return;
+  const r=data.find(d=>d.id===id);if(!r)return;
+  r.comments.push({text:txt,author:'Moi',date:nowStr()});
+  r.updated=today();
+  renderStats();renderTable();showToast('Commentaire ajouté');
+}
+
+function addContact(){
+  const op=document.getElementById('f-op').value.trim();
+  const name=document.getElementById('f-name').value.trim();
+  if(!op||!name){alert('Prestataire et nom sont requis.');return;}
+  const comment=document.getElementById('f-comment').value.trim();
+  const author=document.getElementById('f-author').value.trim()||'Moi';
+  data.push({
+    id:nextId++,op,name,
+    service:document.getElementById('f-service').value.trim(),
+    tel:document.getElementById('f-tel').value.trim(),
+    email:document.getElementById('f-email').value.trim(),
+    role:document.getElementById('f-role').value.trim(),
+    status:document.getElementById('f-status').value,
+    author,updated:today(),
+    comments:comment?[{text:comment,author,date:today()}]:[]
+  });
+  renderStats();renderFilter();renderTable();resetForm();
+  const msg=document.getElementById('success-msg');
+  msg.style.display='flex';
+  setTimeout(()=>{msg.style.display='none';showTab('list');},2000);
+}
+
+function resetForm(){
+  ['f-op','f-name','f-service','f-tel','f-email','f-role','f-comment','f-author'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('f-status').value='Actif';
+}
+
+function exportCSV(){
+  const headers=['Prestataire - Client','Contact','Type de service','Téléphone','Email','Fonction','Statut','Ajouté par','Màj','Nb commentaires'];
+  const rows=data.map(r=>[r.op,r.name,r.service||'',r.tel||'',r.email||'',r.role||'',r.status,r.author||'',r.updated,r.comments.length].map(v=>`"${String(v).replace(/"/g,'""')}"`));
+  const csv='\uFEFF'+[headers,...rows].map(r=>r.join(';')).join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='annuaire_prestataires.csv';a.click();
+}
+
+renderStats();renderFilter();renderTable();
+</script>
+</body>
+</html>
